@@ -1,139 +1,66 @@
-#include "libs.hpp"
+#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <random>
+#include <math.h>
 
-bool loadShaders(GLuint &program) {
-    bool loadSuccess = true;
-    char infoLog[512];
-    GLint success;
+class Particle {
+private:
+    sf::RectangleShape rect;
+    float lifetime;
 
-    std::string temp = "";
-    std::string src = "";
+public:
+    Particle(sf::Vector2f pos) {
+        rect.setSize(sf::Vector2f(100.0f, 100.0f));
+        rect.setOrigin(sf::Vector2f(rect.getSize().x / 2, rect.getSize().y / 2));
+        rect.setPosition(pos);
+        lifetime = 255.0f;
+    }
 
-    std::ifstream in_file;
-
-    in_file.open("vertex_core.glsl");
-
-    if(in_file.is_open()) {
-        while(std::getline(in_file, temp)) {
-            src += temp + "\n";
+    void draw(sf::RenderTarget &target, float FPS, sf::Clock clock, sf::Vector3f color) {
+        target.draw(rect);
+        rect.rotate(0.01f * FPS);
+        if(2.0f <= clock.getElapsedTime().asSeconds() && lifetime > 0.0f) {
+            //lifetime = lifetime - 5.0f;
         }
-    } else {
-        std::cerr << "SHADER ERROR COULDN'T LOAD VERTEX FILE" << "\n";
-        loadSuccess = false;
+        rect.setFillColor(sf::Color(color.x, color.y, color.z, lifetime));
+        rect.setPosition(rand() % 1200, rand() % 640);
     }
 
-    in_file.close();
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const GLchar* vertSrc = src.c_str();
-    glShaderSource(vertexShader, 1, &vertSrc, NULL);
-    glCompileShader(vertexShader);
-
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cerr << "SHADER ERROR COULDN'T COMPILE VERTEX FILE" << "\n";
-        std::cerr << infoLog << "\n";
-        loadSuccess = false;
-    }
-
-    temp = "";
-    src = "";
-
-    in_file.open("fragment_core.glsl");
-
-    if(in_file.is_open()) {
-        while(std::getline(in_file, temp)) {
-            src += temp + "\n";
-        }
-    } else {
-        std::cerr << "SHADER ERROR COULDN'T LOAD FRAGMENT FILE" << "\n";
-        loadSuccess = false;
-    }
-
-    in_file.close();
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar* fragSrc = src.c_str();
-    glShaderSource(fragmentShader, 1, &fragSrc, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cerr << "SHADER ERROR COULDN'T COMPILE FRAGMENT FILE" << "\n";
-        std::cerr << infoLog << "\n";
-        loadSuccess = false;
-    }
-
-    program = glCreateProgram();
-
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-
-    glLinkProgram(program);
-
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetShaderInfoLog(program, 512, NULL, infoLog);
-        std::cerr << "SHADER ERROR COULDN'T COMPILE PROGRAM FILE" << "\n";
-        std::cerr << infoLog << "\n";
-        loadSuccess = false;
-    }
-
-    glUseProgram(0);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return loadSuccess;
-}
+};
 
 int main() {
-    glfwInit();
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "DEUTSCH-SAUEN", sf::Style::Titlebar | sf::Style::Close);
+    window.setFramerateLimit(60);
 
-    int framebufferWidth = 0, framebufferHeight = 0;
+    Particle p1(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p2(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p3(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p4(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p5(sf::Vector2f(1280 / 2, 720 / 2));
 
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    sf::Clock clock;
+    sf::Clock clock2;
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "DEUTSCH-SAUEN", NULL, NULL);
-    if(window == NULL) {
-        const char* description;
-        int code = glfwGetError(&description);
-        std::cerr << "WINDOW ERROR: " << code << " | " << description << "\n";
-        glfwTerminate();
-        exit(EXIT_FAILURE);
+    while(window.isOpen()) {
+        sf::Event event;
+        while(window.pollEvent(event)) {
+            if(event.type == sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window.close();
+            }
+        }
+
+        float FPS = 1.0f / clock.restart().asSeconds();
+
+        window.clear();
+
+        p1.draw(window, FPS, clock2, sf::Vector3f(204.0f, 36.0f, 20.0f));
+        p2.draw(window, FPS, clock2, sf::Vector3f(52.0f, 73.0f, 235.0f));
+        p3.draw(window, FPS, clock2, sf::Vector3f(67.0f, 235.0f, 52.0f));
+        p4.draw(window, FPS, clock2, sf::Vector3f(235.0f, 217.0f, 52.0f));
+        p5.draw(window, FPS, clock2, sf::Vector3f(235.0f, 52.0f, 223.0f));
+
+        window.display();
     }
-
-    glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
-    glViewport(0, 0, framebufferWidth, framebufferHeight);
-
-    glfwMakeContextCurrent(window);
-
-    glewExperimental = GL_TRUE;
-
-    if(glewInit() != GLEW_OK) {
-        std::cerr << "ERROR: GLEW INIT FAILED" << "\n";
-        glfwTerminate();
-    }
-
-    GLuint core_program;
-    if(!loadShaders(core_program)) {
-        glfwTerminate();
-    }
-
-    while(!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-
-        glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-
-        glfwSwapBuffers(window);
-        glFlush();
-    }
-
-    glfwTerminate();
+    
     return 0;
 }
