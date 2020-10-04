@@ -37,6 +37,10 @@ int main() {
     Particle p3(sf::Vector2f(1280 / 2, 720 / 2));
     Particle p4(sf::Vector2f(1280 / 2, 720 / 2));
     Particle p5(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p6(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p7(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p8(sf::Vector2f(1280 / 2, 720 / 2));
+    Particle p9(sf::Vector2f(1280 / 2, 720 / 2));
 
     sf::Clock clock;
     sf::Clock clock2;
@@ -58,6 +62,10 @@ int main() {
         p3.draw(window, FPS, clock2, sf::Vector3f(67.0f, 235.0f, 52.0f));
         p4.draw(window, FPS, clock2, sf::Vector3f(235.0f, 217.0f, 52.0f));
         p5.draw(window, FPS, clock2, sf::Vector3f(235.0f, 52.0f, 223.0f));
+        p6.draw(window, FPS, clock2, sf::Vector3f(52.0f, 225.0f, 235.0f));
+        p7.draw(window, FPS, clock2, sf::Vector3f(95.0f, 235.0f, 52.0f));
+        p8.draw(window, FPS, clock2, sf::Vector3f(182.0f, 43.0f, 207.0f));
+        p9.draw(window, FPS, clock2, sf::Vector3f(207.0f, 100.0f, 29.0f));
 
         window.display();
     }
