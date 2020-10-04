@@ -32,7 +32,7 @@ public:
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1280, 720), "DEUTSCH-SAUEN", sf::Style::Titlebar | sf::Style::Close);
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
 
     Particle p1(sf::Vector2f(100.0f, 100.0f));
     Particle p2(sf::Vector2f(200.0f, 100.0f));
@@ -56,6 +56,7 @@ int main() {
         }
 
         float FPS = 1.0f / clock.restart().asSeconds();
+        std::cout << FPS << "\n";
 
         window.clear();
 
