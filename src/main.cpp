@@ -10,9 +10,25 @@ private:
     sf::Vector2f position;
 
 public:
-    Particle(sf::Vector2f pos) {
+    Particle() {
+        position = sf::Vector2f(0.0f, 0.0f);
+        rect.setSize(sf::Vector2f(10.0f, 10.0f));
+        rect.setOrigin(sf::Vector2f(rect.getSize().x / 2, rect.getSize().y / 2));
+        rect.setPosition(position);
+        lifetime = 255.0f;
+    }
+
+    Particle(sf::Vector2f pos, sf::Vector2f size) {
         position = pos;
-        rect.setSize(sf::Vector2f(100.0f, 100.0f));
+        rect.setSize(size);
+        rect.setOrigin(sf::Vector2f(rect.getSize().x / 2, rect.getSize().y / 2));
+        rect.setPosition(pos);
+        lifetime = 255.0f;
+    }
+
+    void set(sf::Vector2f pos, sf::Vector2f size) {
+        position = pos;
+        rect.setSize(size);
         rect.setOrigin(sf::Vector2f(rect.getSize().x / 2, rect.getSize().y / 2));
         rect.setPosition(pos);
         lifetime = 255.0f;
@@ -30,19 +46,32 @@ public:
 
 };
 
+class ParticleSystem {
+private:
+    Particle particles[1000];
+
+public:
+    ParticleSystem(sf::Vector2f pos, int particleNum) {
+        for(int i = 0; i < particleNum; ++i) {
+            particles[i].set(pos, sf::Vector2f(10.0f, 10.0f));
+        }
+    }
+
+    void draw(sf::RenderTarget &target, float FPS, sf::Clock clock, sf::Vector3f color, sf::Vector2f dispersion, int particleNum) {
+        for(int j = 0; j < particleNum; ++j) {
+            particles[j].draw(target, FPS, clock, color, dispersion);
+        }
+    }
+
+};
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(1280, 720), "DEUTSCH-SAUEN", sf::Style::Titlebar | sf::Style::Close);
     //window.setFramerateLimit(60);
 
-    Particle p1(sf::Vector2f(100.0f, 100.0f));
-    Particle p2(sf::Vector2f(200.0f, 100.0f));
-    Particle p3(sf::Vector2f(300.0f, 100.0f));
-    Particle p4(sf::Vector2f(400.0f, 100.0f));
-    Particle p5(sf::Vector2f(500.0f, 100.0f));
-    Particle p6(sf::Vector2f(100.0f, 200.0f));
-    Particle p7(sf::Vector2f(200.0f, 200.0f));
-    Particle p8(sf::Vector2f(300.0f, 200.0f));
-    Particle p9(sf::Vector2f(400.0f, 200.0f));
+    ParticleSystem ps1(sf::Vector2f(0, 0), 100);
+
+    //Particle p1(sf::Vector2f(100.0f, 100.0f), sf::Vector2f(10.0f, 10.0f));
 
     sf::Clock clock;
     sf::Clock clock2;
@@ -60,15 +89,8 @@ int main() {
 
         window.clear();
 
-        p1.draw(window, FPS, clock2, sf::Vector3f(204.0f, 36.0f, 20.0f), sf::Vector2f(50.0f, 50.0f));
-        p2.draw(window, FPS, clock2, sf::Vector3f(52.0f, 73.0f, 235.0f), sf::Vector2f(50.0f, 50.0f));
-        p3.draw(window, FPS, clock2, sf::Vector3f(67.0f, 235.0f, 52.0f), sf::Vector2f(50.0f, 50.0f));
-        p4.draw(window, FPS, clock2, sf::Vector3f(235.0f, 217.0f, 52.0f), sf::Vector2f(50.0f, 50.0f));
-        p5.draw(window, FPS, clock2, sf::Vector3f(235.0f, 52.0f, 223.0f), sf::Vector2f(50.0f, 50.0f));
-        p6.draw(window, FPS, clock2, sf::Vector3f(52.0f, 225.0f, 235.0f), sf::Vector2f(50.0f, 50.0f));
-        p7.draw(window, FPS, clock2, sf::Vector3f(95.0f, 235.0f, 52.0f), sf::Vector2f(50.0f, 50.0f));
-        p8.draw(window, FPS, clock2, sf::Vector3f(182.0f, 43.0f, 207.0f), sf::Vector2f(50.0f, 50.0f));
-        p9.draw(window, FPS, clock2, sf::Vector3f(207.0f, 100.0f, 29.0f), sf::Vector2f(50.0f, 50.0f));
+        ps1.draw(window, FPS, clock2, sf::Vector3f(204.0f, 36.0f, 20.0f), sf::Vector2f(1280.0f, 720.0f), 100);
+        //p1.draw(window, FPS, clock2, sf::Vector3f(204.0f, 36.0f, 20.0f), sf::Vector2f(50.0f, 50.0f));
 
         window.display();
     }
